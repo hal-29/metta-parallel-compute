@@ -23,45 +23,46 @@
       )
 ))
 
-;;;; Generates a lower triangular matrix from a given matrix.
+;;;; Generates an upper triangular matrix from a given matrix.
 ;;; Parameters: $matrix - the matrix to process
-;;; Returns: A lower triangular matrix with zeros replaced in the appropriate positions.
-(= (to_lower_matrix $matrix)(collapse (_to_lower_matrix $matrix)))
-(= (_to_lower_matrix $matrix)(_to_lower_matrix $matrix 0))
-(= (_to_lower_matrix $matrix $index)(
+;;; Returns: An upper triangular matrix with zeros replaced in the appropriate positions.
+(= (to_upr_matrix $matrix)(collapse (_to_upr_matrix $matrix)))
+(= (_to_upr_matrix $matrix)(_to_upr_matrix $matrix 0))
+(= (_to_upr_matrix $matrix $index)(
         if (== $index (size-atom $matrix))
             (empty)
-            (_to_lower_matrix $matrix (+ $index 1))
+            (_to_upr_matrix $matrix (+ $index 1))
 ))
-(= (_to_lower_matrix $matrix $index)(
+(= (_to_upr_matrix $matrix $index)(
    replace_zeros_left $index (index-atom $matrix $index) 
 ))
 
-;;;; Generates an upper triangular matrix from a given matrix.
+;;;; Generates a lower triangular matrix from a given matrix.
 ;;;; Parameters: $matrix - the matrix to process
-;;;; Returns: An upper triangular matrix with zeros replaced in the appropriate positions.
-(= (to_upper_matrix $matrix)(collapse (_to_upper_matrix $matrix)))
-(= (_to_upper_matrix $matrix)(_to_upper_matrix $matrix 0))
-(= (_to_upper_matrix $matrix $index)(
+;;;; Returns: A lower triangular matrix with zeros replaced in the appropriate positions.
+(= (to_lwr_matrix $matrix)(collapse (_to_lwr_matrix $matrix)))
+(= (_to_lwr_matrix $matrix)(_to_lwr_matrix $matrix 0))
+(= (_to_lwr_matrix $matrix $index)(
         if (== $index (size-atom $matrix))
             (empty)
-            (_to_upper_matrix $matrix (+ $index 1))
+            (_to_lwr_matrix $matrix (+ $index 1))
 ))
-(= (_to_upper_matrix $matrix $index)(
+(= (_to_lwr_matrix $matrix $index)(
    replace_zeros_right (- (- (size-atom $matrix) $index) 1) (index-atom $matrix $index) 
 ))
 
-;;; Example usage of the to_lower_matrix function
-!(to_lower_matrix (
+;;; Example usage of the to_upr_matrix function
+!(to_upr_matrix (
    (1 2 3 4)
    (4 5 6 7)
    (7 8 9 2)
    (4 8 2 9)
 )) ; ((1 2 3 4) (0 5 6 7) (0 0 9 2) (0 0 0 9))
 
-!(to_upper_matrix (
+!(to_lwr_matrix (
    (1 2 3 4)
    (4 5 6 7)
    (7 8 9 2)
    (4 8 2 9)
 )) ; ((1 0 0 0) (4 5 0 0) (7 8 9 0) (4 8 2 9))
+
