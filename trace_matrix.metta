@@ -61,23 +61,32 @@
    )
 ))
 
+;;; Joins every element of two row lists into a single row vector.
+;;; Parameters: $row1 - the first row vector
+;;;            $row2 - the second row vector
+;;; Returns: A new row list of pairs where each pair consists of corresponding elements from $row1 and $row2.
+;;; E.g, (join_rows (1 2 3) (4 5 6)) -> ((1 4) (2 5) (3 6))
+(= (join_rows $row1 $row2)(
+   if (or (== $row1 ()) (== $row2 ())) () (
+      let* (
+      ($joined ((car-atom $row1) (car-atom $row2)) )
+      ($rest  (join_rows (cdr-atom $row1) (cdr-atom $row2))) 
+      ) (cons-atom $joined $rest))
+))
 
 ;;; Multiplies two rows element-wise.
 ;;; Parameters: $row1 - the first row vector
 ;;;            $row2 - the second row vector
 ;;; Returns: The sum of the products of corresponding elements in the two rows.
 ;;; E.g, (multiply_rows (1 2 3) (4 5 6)) -> 32
-(= (multiply_rows $row1 $row2)(
-   if (== $row1 ()) 0 ( 
-         let* (
-            (($h1 $t1)(decons-atom $row1))
-            (($h2 $t2)(decons-atom $row2))
-            ($product (* $h1 $h2))
-            ($rest (multiply_rows $t1 $t2))
-         ) (+ $product $rest)
-   )
+(= (multiply_rows $row1 $row2)(let $list (collapse (_multiply_rows $row1 $row2)) (foldl-atom $list 0 $acc $x (+ $acc $x))))
+(= (_multiply_rows $row1 $row2)(
+   let* (
+      ($joined (join_rows $row1 $row2))
+      (($n1 $n2) (superpose $joined))
+      ($product (* $n1 $n2))
+   ) $product
 ))
-
 
 
 ;;; Multiplies two square matrices.
@@ -122,3 +131,12 @@
          (+ $curr (_calc_trace $matrix (+ $i 1)))
       )
 ))
+
+!(matrix_power 
+  (
+    (3 5 6)
+    (3 5 6)
+    (3 5 6)
+  )
+  5
+)
